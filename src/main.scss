@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+	@apply m-0 p-0 h-full w-full text-gray-800 bg-gray-100;
+}
+
+#app {
+	font-family: Ubuntu, Helvetica, Avenir, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	
+	@apply h-full w-full flex flex-row;
+
+	#header {
+		@apply py-3 bg-white shadow-lg;
+
+		h3 {
+			@apply text-xl font-bold pl-2;
+
+			span {
+				@apply rounded text-sm bg-green-500 px-2 py-1 ml-1;
+			}
+		}
+
+		&.nobg {
+			 @apply bg-transparent absolute w-full top-0 z-50 shadow-none;
+		}
+	}
+
+	#sidebar {
+		@apply shadow-inner bg-ataas-gray w-1/6 z-20;
+		max-width: 250px;
+
+		.logo {
+			@apply my-5 ml-5;
+			height: auto;
+			width: 112px;
+		}
+
+		&.login {
+			@apply absolute bg-transparent shadow-none;
+
+			.links {
+				@apply hidden;
+			}
+
+			.logo {
+				width: 150px;
+
+				.ataas, .io, .graph {
+					fill: #445;
+				}
+			}
+		}
+
+		
+	}
+
+	#main-view {
+		@apply flex h-full flex-grow px-10 pt-2 overflow-auto;
+	}
+}
+
+.field {
+	@apply flex flex-col mt-2 mb-3;
+	
+	label {
+		@apply mb-2 text-gray-700;
+	}
+
+	input {
+		@apply text-gray-900 shadow-inner border rounded py-2 px-3;
+		background-color: #fafafb;
+
+		&:focus {
+			@apply border-gray-500 border outline-none;
+		}
+	}
+}
+
+.btn {
+	@apply w-full text-lg py-2 shadow rounded-lg mt-5;
+
+	&.primary {
+		@apply bg-yellow-500;
+
+		&:hover {
+			@apply bg-yellow-400;
+		}
+
+		&:focus {
+			@apply outline-none bg-yellow-300;
+		}
+	}
+
+	&[disabled] {
+		@apply opacity-40;
+	}
+}
+
+@-moz-keyframes spin {
+	100% {
+		-moz-transform: rotate(360deg);
+	}
+}
+
+@-webkit-keyframes spin {
+	100% {
+		-webkit-transform: rotate(360deg);
+	}
+}
+
+@keyframes spin {
+	100% {
+		-webkit-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+
+.svg-inline--fa {
+	@apply inline h-4 w-4;
+
+	&.fa-spinner-third {
+		-webkit-animation:spin 1s linear infinite;
+		-moz-animation:spin 1s linear infinite;
+		animation:spin 1s linear infinite;
+
+		.fa-secondary {
+			@apply opacity-40;
+		}
+
+		.fa-primary {
+			@apply opacity-100;
+		}
+	}
+}
+
+.code-tab {
+	@apply inline pr-6;
+}
