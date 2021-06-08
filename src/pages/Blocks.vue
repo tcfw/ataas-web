@@ -1,10 +1,12 @@
 <template>
 	<div id="blocks">
-		<h2>Blocks</h2>
-		<div>
-			<input type="checkbox" v-model="allBlocks" id="show_all_blocks" /><label for="show_all_blocks"> Show Ended Blocks</label>
+		<div class="flex flex-row">
+			<h2>Blocks</h2>
+			<switcher v-model="allBlocks" class="mt-3 ml-4">
+				Show Ended Blocks
+			</switcher>
 		</div>
-		<div id="order-blocks" v-if="blocks">
+		<div id="order-blocks" v-if="Object.keys(blocks).length > 0">
 			<div v-for="block in blocks" :key="block.id" class="block" :class="{selected: selectedId == block.id}" @click="select(block)">
 				<span class="flex text-left">
 					<span v-if="block.instrumentInfo && block.instrumentInfo.icon" class="forex-icon" :style="{backgroundImage: 'url('+block.instrumentInfo.icon+')'} "></span>
@@ -35,12 +37,16 @@
 				</span>
 			</div>
 		</div>
+		<div v-else class="recommend_addnew">
+				<CryptoFlower/>
+				<div>Add a new block by clicking the '+' button</div>
+		</div>
 		<div class="flex-grow flex flex-col" v-if="selectedId">
 			<div id="info-sep"></div>
 			<div>
 				<div class="buysell">
 					<button @click="manual('BUY')" class="buy" :disabled="selected.state != 'SOLD'">Buy</button>
-					<button @click="manual('SELL')" class="sell" :disabled="selected.state !='PENDING' || selected.state != 'PURCHASED'">Sell</button>
+					<button @click="manual('SELL')" class="sell" :disabled="selected.state !='PENDING' && selected.state != 'PURCHASED'">Sell</button>
 				</div>
 				<div class="flex flex-row space-x-4 items-center">
 					<span v-if="selected.instrumentInfo && selected.instrumentInfo.icon" class="forex-icon lg" :style="{backgroundImage: 'url('+selected.instrumentInfo.icon+')'} "></span>
@@ -113,11 +119,15 @@ import countdown from '../components/countdown.vue';
 import _ from 'lodash';
 import moment from 'moment';
 import nl2br from '../helpers/nl2br';
+import CryptoFlower from '../icons/undraw_Crypto_flowers.vue';
+import switcher from '../components/switcher.vue';
 
 export default {
 	components: {
 		countdown,
-		nl2br
+		nl2br,
+		CryptoFlower,
+		switcher
 	},
 	data() {
 		return {
@@ -387,14 +397,14 @@ export default {
 	@apply float-right flex mt-1;
 
 	.buy {
-		@apply py-2 px-3 bg-green-500 text-white rounded-l-lg shadow text-sm;
+		@apply py-2 px-3 bg-green-500 text-white rounded-l-lg shadow-lg text-sm;
 
 		&[disabled] {
 			@apply bg-green-300 shadow-none;
 		}
 	}
 	.sell {
-		@apply py-2 px-3 bg-red-500 text-white rounded-r-lg shadow text-sm;
+		@apply py-2 px-3 bg-red-500 text-white rounded-r-lg shadow-lg text-sm;
 
 		&[disabled] {
 			@apply bg-red-200 shadow-none;

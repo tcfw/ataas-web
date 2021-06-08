@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ataas-web
+  labels:
+    app: ataas-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ataas-web
+  template:
+    metadata:
+      labels:
+        app: ataas-web
+    spec:
+      containers:
+        - name: ataas-web
+          image: tcfw/ataas-web
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ataas-web
+spec:
+  selector:
+    app: ataas-web
+  ports:
+    - port: 80
+      name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ataas-web
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+    - hosts:
+        - ataas.tcfw.com.au
+      secretName: ataas-web-ssl
+  rules:
+    - host: ataas.tcfw.com.au
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ataas-web
+                port:
+                  number: 80

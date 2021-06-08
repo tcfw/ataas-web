@@ -62,7 +62,7 @@ export default {
 		fetch({commit}) {
 			commit('remoteState', 'loading');
 			api.get('/v1/blocks').then(d => {
-				commit('set', d.data.blocks);
+				commit('set', d.data.blocks || {});
 				commit('remoteState', 'loaded');
 			}).catch(e => {
 				alert(e)

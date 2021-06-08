@@ -24,7 +24,7 @@ export default {
 
 			return new Promise((resolve, reject) => {
 				api.get('/v1/orders/' + blockID).then(d => {
-					let orders = d.data.orders;
+					let orders = d.data.orders || {};
 					commit('set', { blockID, orders });
 					commit('remoteState', { blockID, status: 'loaded' });
 					resolve(d.data.orders);

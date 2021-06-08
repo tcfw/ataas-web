@@ -29,7 +29,7 @@ export default {
 		fetch({commit}) {
 			commit('remoteState', 'loading');
 			api.get('/v1/strategy').then(d => {
-				commit('set', d.data.strategies);
+				commit('set', d.data.strategies || {});
 				commit('remoteState', 'loaded');
 			}).catch(e => {
 				alert(e)

@@ -140,3 +140,11 @@ html, body {
 .code-tab {
 	@apply inline pr-6;
 }
+
+.recommend_addnew {
+	@apply flex flex-col items-center text-2xl font-bold text-gray-300 justify-items-center h-full overflow-hidden text-center mt-20;
+
+	svg {
+		@apply block h-56 w-56 opacity-30 mb-10;
+	}
+}
