@@ -5,6 +5,7 @@ export const symbols = {
 			foreign: "ADA",
 			split: "ADA/AUD",
 			icon: "/forex-icons/ada.svg",
+			blockRef: "ADAAUD",
 			description: "",
 		},
 		"BNBAUD": {
@@ -12,6 +13,7 @@ export const symbols = {
 			foreign: "BNB",
 			split: "BNB/AUD",
 			icon: "/forex-icons/bnb.svg",
+			blockRef: "BNBAUD",
 			description: "",
 		},
 		"BTCAUD": {
@@ -19,6 +21,7 @@ export const symbols = {
 			foreign: "BTC",
 			split: "BTC/AUD",
 			icon: "/forex-icons/btc.svg",
+			blockRef: "BTCAUD",
 			description: "",
 		},
 		"DOGEAUD": {
@@ -26,6 +29,7 @@ export const symbols = {
 			foreign: "DOGE",
 			split: "DOGE/AUD",
 			icon: "/forex-icons/dodge.svg",
+			blockRef: "DOGEAUD",
 			description: "",
 		},
 		"ETHAUD": {
@@ -33,6 +37,7 @@ export const symbols = {
 			foreign: "ETH",
 			split: "ETH/AUD",
 			icon: "/forex-icons/eth.svg",
+			blockRef: "ETHAUD",
 			description: "",
 		},
 		"LINKAUD": {
@@ -40,6 +45,7 @@ export const symbols = {
 			foreign: "LINK",
 			split: "LINK/AUD",
 			icon: "/forex-icons/link.svg",
+			blockRef: "LINKAUD",
 			description: "",
 		},
 		"SXPAUD": {
@@ -47,6 +53,7 @@ export const symbols = {
 			foreign: "SXP",
 			split: "SXP/AUD",
 			icon: "/forex-icons/sxp.svg",
+			blockRef: "SXPAUD",
 			description: "",
 		},
 		"TRXAUD": {
@@ -54,6 +61,7 @@ export const symbols = {
 			foreign: "TRX",
 			split: "TRX/AUD",
 			icon: "/forex-icons/trx.svg",
+			blockRef: "TRXAUD",
 			description: "",
 		},
 		"XRPAUD": {
@@ -61,6 +69,7 @@ export const symbols = {
 			foreign: "XRP",
 			split: "XRP/AUD",
 			icon: "/forex-icons/xrp.svg",
+			blockRef: "XRPAUD",
 			description: "",
 		},
 	}

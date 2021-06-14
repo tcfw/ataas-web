@@ -9,7 +9,7 @@
 							<label>Email</label>
 							<input type="email" name="email" v-model="email"/>
 						</div>
-						<button type="submit" class="btn primary" @click="next" :disabled="loadingNext">
+						<button type="submit" class="btn primary mt-5" @click="next" :disabled="loadingNext">
 							<template v-if="!loadingNext">
 								Next
 							</template>
@@ -28,7 +28,7 @@
 							</label>
 							<input type="password" name="password" v-model="password"/>
 						</div>
-						<button class="btn primary" @click="login" :disabled="loggingIn">Login</button>
+						<button class="btn primary mt-5" @click="login" :disabled="loggingIn">Login</button>
 					</form>
 					<div class="text-center mt-3 text-gray-400 cursor-pointer" @click="prev"><LeftChevron /> Back</div>
 				</div>
@@ -109,6 +109,7 @@ export default {
 				insecureLogin: true,
 			}}
 			this.$http.post('/v1/auth/login', uc).then(d => {
+				this.$root.isLoggedIn();
 				this.$router.push({name: 'home'})
 			}).catch(e => {
 				alert(e)

@@ -2,6 +2,9 @@
 	<div id="blocks">
 		<div class="flex flex-row">
 			<h2>Blocks</h2>
+			<button id="add" @click="showAddDialog">
+				<Plus/>
+			</button>
 			<switcher v-model="allBlocks" class="mt-3 ml-4">
 				Show Ended Blocks
 			</switcher>
@@ -32,7 +35,7 @@
 						<span class="w-24" :title="block.strategy.next"><countdown @past="handlePast" :until="block.strategy.next" /></span>
 					</template>
 					<span class="w-40">
-						<span class="state" :class="{sold: block.state=='SOLD', nothing: block.state=='PENDING', ended: block.state=='ENDED'}">{{block.state}}</span>
+						<span class="state" :class="{sold: block.state=='SOLD', nothing: block.state=='PENDING', ended: block.state=='ENDED'}">{{block.state || 'PENDING'}}</span>
 					</span>
 				</span>
 			</div>
@@ -84,7 +87,7 @@
 										</tr>
 									</table>
 								</td></tr>
-								<tr><th>Action Duration</th><td>Every <b>{{blockDuration(selected.strategy.duration)}}</b></td></tr>
+								<tr><th>Action Schedule</th><td>Every <b>{{blockDuration(selected.strategy.duration)}}</b></td></tr>
 								<tr><th>Block Size</th><td class="text-yellow-500">{{currency(selected.purchase)}}</td></tr>
 							</table>
 							<div v-else>Loading...</div>
@@ -113,21 +116,39 @@
 			</div>
 		</div>
 	</div>
+	<Dialog :visible="showAdd" @bgClick="showAdd = !showAdd">
+		<template v-slot:header>Add New Block</template>
+		<template v-slot:body>
+			<BlockForm ref="bform" />
+		</template>
+		<template v-slot:footer>
+			<button class="ml-4 btn primary sm" @click="addBlock">Add</button>
+			<button class="btn secondary sm" @click="showAdd = !showAdd">Cancel</button>
+		</template>
+	</Dialog>
 </template>
 <script>
-import countdown from '../components/countdown.vue';
 import _ from 'lodash';
+import countdown from '../components/countdown.vue';
+import CryptoFlower from '../icons/undraw_Crypto_flowers.vue';
+import Dialog from '../components/Dialog.vue';
 import moment from 'moment';
 import nl2br from '../helpers/nl2br';
-import CryptoFlower from '../icons/undraw_Crypto_flowers.vue';
+import Plus from '../icons/plus.vue';
 import switcher from '../components/switcher.vue';
+import Times from '../icons/times.vue';
+import BlockForm from '../components/BlockForm.vue';
 
 export default {
 	components: {
 		countdown,
-		nl2br,
 		CryptoFlower,
-		switcher
+		Dialog,
+		nl2br,
+		Plus,
+		Times,
+		switcher,
+		BlockForm,
 	},
 	data() {
 		return {
@@ -138,6 +159,7 @@ export default {
 			orders: {},
 			routeLoaded: false,
 			allowReload: false,
+			showAdd: false,
 		}
 	},
 	created() {
@@ -150,13 +172,22 @@ export default {
 					!this.routeLoaded &&
 					this.blocks != {}
 				) {
-					if (this.$route.params.id) {
-						this.select(this.blocks[this.$route.params.id]);
+					if (this.id || this.$route.params.id) {
+						this.select(this.blocks[this.$route.params.id], true);
 					}
 					this.routeLoaded = true;
 				}
 			}
 		})
+
+		this.$watch(
+			() => this.$route.params,
+			(toParams) => {
+				if (toParams.id==null) {
+					this.select(null, true)
+				}
+			}
+		)
 	},
 	mounted() {
 		this.timer = setInterval(this.refresh, 300000) //5 mins
@@ -229,10 +260,13 @@ export default {
 				alert(e)
 			})
 		},
-		select(block) {
-			if (this.selected == block) {
+		select(block, skipRoute) {
+			if (this.selected == block || block == null) {
 				this.selected = null;
 				this.selectedId = null;
+				if (!skipRoute) this.$router.push({name: 'blocks'});
+
+				return
 			} else {
 				this.selected = block
 				this.selectedId = block.id
@@ -244,7 +278,9 @@ export default {
 				})
 			}
 
-			this.$router.push({name: 'blocks', params:{id: this.selectedId}});
+			if (!skipRoute) {
+				this.$router.push({name: 'blocks', params:{id: this.selectedId}});
+			}
 		},
 		load() {
 			if (this.$store.state.blocks.remoteState != "loaded") {
@@ -271,6 +307,13 @@ export default {
 		},
 		formatDateTime(v) {
 			return moment(v).format("YYYY-MM-DD HH:mm:ss");
+		},
+		showAddDialog() {
+			//TODO(tcfw): reset
+			this.showAdd = true;
+		},
+		addBlock() {
+			this.$refs.bform.submit()
 		}
 	}
 }
@@ -281,6 +324,23 @@ export default {
 
 	.title {
 		@apply mb-5 text-gray-500 text-sm;
+	}
+}
+
+button#add {
+	@apply flex items-center justify-items-center rounded-full shadow bg-gray-700 text-yellow-500 h-12 w-12 ml-3 mt-1 outline-none;
+	transition: box-shadow .3s ease-in-out, background-color .3s ease-in-out;
+
+	svg {
+		@apply self-center flex-grow;
+	}
+
+	&:hover {
+		@apply shadow-lg bg-gray-600;
+	}
+
+	&:active {
+		@apply shadow-none bg-gray-800;
 	}
 }
 
@@ -296,7 +356,8 @@ export default {
 	}
 
 	#order-blocks {
-		@apply mt-5;
+		@apply mt-5 overflow-auto;
+		min-height: 225px;
 	}
 
 	.forex-icon {
@@ -312,6 +373,14 @@ export default {
 
 	#info-sep {
 		@apply bg-white shadow-sm block h-1 -mx-10 mt-2 mb-4 overflow-hidden cursor-move select-none;
+
+		&:hover {
+			@apply bg-blue-400;
+		}
+
+		&:active {
+			@apply bg-yellow-400;
+		}
 	}
 
 	.block {

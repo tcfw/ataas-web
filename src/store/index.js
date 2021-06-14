@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 import blocks from './modules/blocks';
+import me from './modules/me';
 import orders from './modules/orders';
 import strategies from './modules/strategies';
 
@@ -9,6 +10,7 @@ export function initStore() {
 			blocks,
 			strategies,
 			orders,
+			me,
 		}
 	});
 }

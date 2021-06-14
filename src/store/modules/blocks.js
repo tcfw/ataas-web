@@ -15,11 +15,20 @@ export default {
 			state.blocks = {};
 
 			for (const [key, block] of Object.entries(blocks)) {
+				if (!block.state) {
+					block.state = "PENDING"
+				}
+
 				block.instrumentInfo = symbols[block.market][block.instrument];
 				state.blocks[block.id] = block;
 			}
 		},
 		update(state, block) {
+			if (!block.state) {
+				block.state = "PENDING"
+			}
+
+			block.instrumentInfo = symbols[block.market][block.instrument];
 			state.blocks[block.id] = block;
 		}
 	},
@@ -69,5 +78,12 @@ export default {
 				commit('remoteState', 'failed');
 			});
 		},
+		new({ commit }, block) {
+			let res = api.post('/v1/blocks', block);
+			res.then(d => {
+				commit('update', d.data);
+			});
+			return res;
+		}
 	}
 };

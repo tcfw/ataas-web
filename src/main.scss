@@ -30,7 +30,7 @@ html, body {
 	}
 
 	#sidebar {
-		@apply shadow-inner bg-ataas-gray w-1/6 z-20;
+		@apply shadow-inner bg-ataas-gray w-1/6 z-10;
 		max-width: 250px;
 
 		.logo {
@@ -54,12 +54,14 @@ html, body {
 				}
 			}
 		}
-
-		
 	}
 
 	#main-view {
-		@apply flex h-full flex-grow px-10 pt-2 overflow-auto;
+		@apply flex h-full flex-grow px-10 pt-2 overflow-auto relative;
+	}
+
+	#top-left {
+		@apply absolute right-0 top-0 mt-3 mr-4 flex flex-row items-center;
 	}
 }
 
@@ -69,34 +71,48 @@ html, body {
 	label {
 		@apply mb-2 text-gray-700;
 	}
+}
 
-	input {
-		@apply text-gray-900 shadow-inner border rounded py-2 px-3;
-		background-color: #fafafb;
+input, select {
+	@apply text-gray-900 shadow-inner border rounded py-2 px-3;
+	background-color: #fafafb;
 
-		&:focus {
-			@apply border-gray-500 border outline-none;
-		}
+	&:focus {
+		@apply border-gray-500 border outline-none;
 	}
 }
 
+
 .btn {
-	@apply w-full text-lg py-2 shadow rounded-lg mt-5;
+	@apply w-full text-lg py-2 shadow rounded-lg outline-none bg-white;
+	transition: all .15s ease-in-out;
+
+	&:focus, &:active {
+		@apply bg-gray-200;
+	}
+
+	&:hover {
+		@apply bg-gray-100;
+	}
 
 	&.primary {
-		@apply bg-yellow-500;
+		@apply bg-yellow-500 text-white;
 
 		&:hover {
 			@apply bg-yellow-400;
 		}
 
-		&:focus {
-			@apply outline-none bg-yellow-300;
+		&:focus, &:active {
+			@apply bg-yellow-300;
 		}
 	}
 
 	&[disabled] {
 		@apply opacity-40;
+	}
+
+	&.sm {
+		@apply text-sm inline-block w-auto px-6;
 	}
 }
 
@@ -147,4 +163,12 @@ html, body {
 	svg {
 		@apply block h-56 w-56 opacity-30 mb-10;
 	}
+}
+
+.prism-editor__textarea:focus {
+	outline: none;
+}
+
+.prism-editor__line-number {
+	@apply text-sm leading-6;
 }

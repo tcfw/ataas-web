@@ -22,9 +22,9 @@ export default {
 		}
 	},
 	actions: {
-		update({ commit }, block) {
+		update({ commit }, strategy) {
 			//axios save
-			commit('update', block);
+			commit('update', strategy);
 		},
 		fetch({commit}) {
 			commit('remoteState', 'loading');
@@ -36,5 +36,12 @@ export default {
 				commit('remoteState', 'failed');
 			});
 		},
+		new({ commit }, strategy) {
+			let res = api.post('/v1/strategy', strategy);
+			res.then(d => {
+				commit('update', d.data);
+			});
+			return res;
+		}
 	}
 };
