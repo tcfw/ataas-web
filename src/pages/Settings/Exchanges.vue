@@ -55,7 +55,7 @@ export default {
 		return {
 			exchanges: [],
 			loading: true,
-			showAdd: true,
+			showAdd: false,
 			add: {
 				exchange: "",
 				key: "",
