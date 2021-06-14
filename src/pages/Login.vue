@@ -69,13 +69,13 @@ export default {
 		next() {
 			this.loadingNext = true;
 			var that = this; //resolve inside recaptcha
-			// this.$recaptchaLoaded().then(function() {
-			// 	that.$recaptcha('submit').then(token => {
+			this.$recaptchaLoaded().then(function() {
+				that.$recaptcha('submit').then(token => {
 					var nextdata = {
 						userCreds: {
 							next: true,
 							username: that.email,
-							recaptcha: 'token',
+							recaptcha: token || 'token',
 						}
 					}
 					that.$http.post('/v1/auth/login', nextdata).then(d=>{
@@ -91,11 +91,11 @@ export default {
 							alert(e)
 						}
 					})
-			// 	}).catch(e => {
-			// 		that.loadingNext = false;
-			// 		alert(e)
-			// 	})
-			// })
+				}).catch(e => {
+					that.loadingNext = false;
+					alert(e)
+				})
+			})
 		},
 		prev() {
 			this.$refs.fstep.classList.remove("moved");
