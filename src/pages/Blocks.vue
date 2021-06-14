@@ -1,7 +1,7 @@
 <template>
 	<div id="blocks">
 		<div class="flex flex-row">
-			<h2>Blocks</h2>
+			<h2 class="pageheader">Blocks</h2>
 			<button id="add" @click="showAddDialog">
 				<Plus/>
 			</button>
@@ -123,7 +123,7 @@
 		</template>
 		<template v-slot:footer>
 			<button class="ml-4 btn primary sm" @click="addBlock">Add</button>
-			<button class="btn secondary sm" @click="showAdd = !showAdd">Cancel</button>
+			<button class="btn sm" @click="showAdd = !showAdd">Cancel</button>
 		</template>
 	</Dialog>
 </template>
@@ -346,14 +346,6 @@ button#add {
 
 #blocks {
 	@apply w-full flex flex-col;
-
-	h2 {
-		@apply text-2xl my-3;
-
-		small {
-			@apply text-gray-500;
-		}
-	}
 
 	#order-blocks {
 		@apply mt-5 overflow-auto;

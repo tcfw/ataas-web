@@ -57,11 +57,11 @@ export default {
 			setTimeout(()=>{this.allowToggle = true}, 100)
 		},
 		settings() {
-			this.showMenu = false;
+			this.toggleMenu()
 			this.$router.push('/settings');
 		},
 		logout() {
-			this.showMenu = false;
+			this.toggleMenu()
 			this.$http.post('/v1/auth/revoke').then(d => {
 				this.$root.isLoggedIn();
 				this.$router.push({name:'login'})

@@ -73,6 +73,14 @@ html, body {
 	}
 }
 
+h2 {
+	@apply text-2xl my-3;
+
+	small {
+		@apply text-gray-500;
+	}
+}
+
 input, select {
 	@apply text-gray-900 shadow-inner border rounded py-2 px-3;
 	background-color: #fafafb;
@@ -109,6 +117,14 @@ input, select {
 
 	&[disabled] {
 		@apply opacity-40;
+	}
+
+	&.secondary {
+		@apply text-white bg-gray-600;
+
+		&:hover {
+			@apply bg-gray-500;
+		}
 	}
 
 	&.sm {
@@ -171,4 +187,26 @@ input, select {
 
 .prism-editor__line-number {
 	@apply text-sm leading-6;
+}
+
+.datatable {
+	@apply w-full bg-white rounded p-2 shadow-lg;
+
+	thead {
+		th {
+			@apply bg-gray-600 text-white text-left px-2 py-1 font-normal;
+
+			&:first-child {
+				@apply rounded-tl;
+			}
+
+			&:last-child {
+				@apply rounded-tr;
+			}
+		}
+	}
+
+	td {
+		@apply px-2 py-1;
+	}
 }
