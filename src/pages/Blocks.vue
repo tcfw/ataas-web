@@ -111,6 +111,7 @@
 					</div>
 					<div class="panel col-span-2">
 						<div class="title">History</div>
+						<TradeCandle :exchange="selected.market" :symbol="selected.instrument" />
 					</div>
 				</div>
 			</div>
@@ -138,6 +139,7 @@ import Plus from '../icons/plus.vue';
 import switcher from '../components/switcher.vue';
 import Times from '../icons/times.vue';
 import BlockForm from '../components/BlockForm.vue';
+import TradeCandle from '../components/TradeCandle.vue';
 
 export default {
 	components: {
@@ -149,6 +151,7 @@ export default {
 		Times,
 		switcher,
 		BlockForm,
+		TradeCandle,
 	},
 	data() {
 		return {
