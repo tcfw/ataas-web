@@ -42,6 +42,7 @@
 import LeftChevron from '../icons/left-chevron.vue';
 import Loading from '../icons/loading.vue';
 import Cookies from '../helpers/cookies';
+
 export default {
 	components: {
 		LeftChevron,
@@ -83,7 +84,7 @@ export default {
 						setTimeout(()=> {that.loadingNext = false;}, 300)
 					}).catch(e => {
 						if (e.response.status==400 && e.response.data.error=="auth required") {
-							this.method = "password"
+							that.method = "password"
 							that.$refs.fstep.classList.add("moved");
 							setTimeout(()=> {that.loadingNext = false;}, 300)
 						} else {
