@@ -7,6 +7,9 @@
 		@mousemove="mouseMove"
 		@mouseenter="showMouse = true"
 		@mouseleave="hideMouse"
+		@wheel.prevent="scroll"
+		@mousedown="dragStart"
+		@mouseup="dragEnd"
 	/>
 </template>
 <script>
@@ -25,6 +28,11 @@ export default {
 			showMouse: false,
 			mouseX: 0,
 			mouseY: 0,
+			xOffset: 0,
+			candleWidth: 10,
+
+			dragging: false,
+			dragStartPos: 0,
 		}
 	},
 	watch: {
@@ -46,9 +54,35 @@ export default {
 		clearInterval(this.timer);
 	},
 	methods: {
+		scroll(e) {
+			this.candleWidth += e.deltaY
+			if (this.candleWidth <= 4) {
+				this.candleWidth = 4;
+			} else if (this.candleWidth >= 100) {
+				this.candleWidth = 100;
+			}
+			this.draw()
+		},
+		dragStart(e) {
+			this.dragStartPos = e.offsetX
+			this.dragging = true
+		},
+		dragEnd(e) {
+			this.dragging = false
+		},
 		mouseMove(e) {
 			this.mouseX = e.offsetX
 			this.mouseY = e.offsetY
+
+			if (this.dragging) {
+				this.xOffset += this.mouseX - this.dragStartPos
+				this.dragStartPos = this.mouseX
+
+				if (this.xOffset <= -400) {
+					this.xOffset = -400
+				}
+			}
+
 			this.draw()
 		},
 		hideMouse(e) {
@@ -83,7 +117,7 @@ export default {
 
 			const d = _.reverse(_.sortBy(this.data, 'timestamp'))
 			d.forEach((ohlc,i) => {
-				this.drawCandle(ctx, dims, minmax, 11, ohlc, i)
+				this.drawCandle(ctx, dims, minmax, this.candleWidth, ohlc, i)
 			})
 
 			this.drawYLabels(ctx, dims, minmax)
@@ -106,14 +140,14 @@ export default {
 		drawYLabels(ctx, dims, minmax) {
 			let i = 1;
 			let a = minmax.max;
-			let step = (minmax.max-minmax.min)/8;
+			let step = (minmax.max-minmax.min)/9;
 
-			while(a>=minmax.min) {
+			while(i<10) {
 				ctx.font = "normal 13px Ubuntu,Helvetica,Arial,sans-serif";
 				ctx.fillStyle = '#9999A1';
 				ctx.fillText(a.toFixed(4), dims.width - 110, (dims.height/10)*i + 3)
-				i++
 				a-=step
+				i++
 			}
 		},
 		drawCursor(ctx, dims) {
@@ -124,7 +158,7 @@ export default {
 			if (this.mouseX <= dims.width-120) {
 				ctx.beginPath()
 				ctx.setLineDash([10, 5])
-				ctx.lineWith = 1;
+				ctx.lineWith = 0.5;
 				const vx = Math.min(dims.width-120, Math.ceil(this.mouseX))
 				ctx.moveTo(vx, pad)
 				ctx.lineTo(vx, dims.height-pad)
@@ -135,7 +169,7 @@ export default {
 			if (this.mouseY >= 30 && this.mouseY <= dims.height-30) {
 				ctx.beginPath()
 				ctx.setLineDash([10, 5])
-				ctx.lineWith = 1;
+				ctx.lineWith = 0.5;
 				const hy = Math.ceil(this.mouseY)
 				ctx.moveTo(10, hy)
 				ctx.lineTo(dims.width-120, hy)
@@ -146,8 +180,8 @@ export default {
 		drawBaseLine(ctx, dims, scale, n) {
 			ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)'
 			ctx.beginPath()
-			ctx.moveTo(10, scale * n)
-			ctx.lineTo(dims.width - 120, scale * n)
+			ctx.moveTo(10, Math.floor(scale * n))
+			ctx.lineTo(dims.width - 120, Math.floor(scale * n))
 			ctx.closePath()
 			ctx.stroke()
 		},
@@ -161,13 +195,16 @@ export default {
 			}
 
 			const rpad = 10
-			const tpad = 0
+			const tpad = 10
 
 			//Line H-L
 			ctx.beginPath()
-			const x = dims.width - rpad - (nth * widthScale + nth*rpad) - 120
-			const y1 = tpad + (1-((ohlc.high-minmax.min)/(minmax.max-minmax.min))) * dims.height
-			const y2 = y1 + (((ohlc.high-ohlc.low)/(minmax.max-minmax.min))) * dims.height
+			const x = Math.floor(dims.width - rpad - (nth * widthScale + nth*rpad) - 120) + this.xOffset
+
+			if (x < 20 || x >= (dims.width - 120)) return;
+
+			const y1 = Math.floor(tpad + (1-((ohlc.high-minmax.min)/(minmax.max-minmax.min))) * dims.height)
+			const y2 = Math.floor(y1 + (((ohlc.high-ohlc.low)/(minmax.max-minmax.min))) * dims.height)
 			ctx.moveTo(x, y1)
 			ctx.lineTo(x, y2)
 			ctx.closePath()
@@ -177,10 +214,10 @@ export default {
 			// ctx.beginPath()
 			// ctx.closePath()
 			// ctx.fill()
-			const oy1 = tpad + (1-((ohlc.open-minmax.min)/(minmax.max-minmax.min))) * dims.height
-			const oy2 = (1-((ohlc.close-minmax.min)/(minmax.max-minmax.min))) * dims.height - oy1
-			const ox = x-(widthScale/2)
-			const ox1 = widthScale
+			const oy1 = Math.floor(tpad + (1-((ohlc.open-minmax.min)/(minmax.max-minmax.min))) * dims.height)
+			const oy2 = Math.floor((1-((ohlc.close-minmax.min)/(minmax.max-minmax.min))) * dims.height - oy1 + tpad + 1)
+			const ox = Math.floor(x-(widthScale/2))
+			const ox1 = Math.floor(widthScale)
 			ctx.fillRect(ox, oy1, ox1, oy2)
 		},
 		canvDims() {
