@@ -5,7 +5,7 @@
 			<button id="add" @click="showAddDialog">
 				<Plus/>
 			</button>
-			<switcher v-model="allBlocks" class="mt-3 ml-4">
+			<switcher v-model="allBlocks" @click="toggleAllBlocks" class="mt-3 ml-4">
 				Show Ended Blocks
 			</switcher>
 		</div>
@@ -102,6 +102,9 @@
 								<div class="w-28">{{currency(order.price)}}</div>
 								<div class="w-44">{{formatDateTime(order.timestamp)}}</div>
 							</div>
+							<div v-if="!orders || orders.length == 0" class="text-gray-300 text-sm ml-6 pb-2">
+								No orders yet...
+							</div>
 						</div>
 					</div>
 				</div>
@@ -156,13 +159,13 @@ export default {
 	data() {
 		return {
 			timer: null,
-			allBlocks: false,
 			selected: null,
 			selectedId: null,
 			orders: {},
 			routeLoaded: false,
 			allowReload: false,
 			showAdd: false,
+			allBlocks: false,
 		}
 	},
 	created() {
@@ -191,6 +194,7 @@ export default {
 				}
 			}
 		)
+		this.allBlocks = this.$store.state.user_settings.blocks.allBlocks
 	},
 	mounted() {
 		this.timer = setInterval(this.refresh, 300000) //5 mins
@@ -200,7 +204,7 @@ export default {
 	},
 	computed: {
 		blocks() {
-			if (this.allBlocks) {
+			if (this.$store.state.user_settings.blocks.allBlocks) {
 				return this.$store.getters['blocks/withStrategy'];
 			}
 
@@ -208,6 +212,11 @@ export default {
 		},
 	},
 	methods: {
+		toggleAllBlocks() {
+			let nval = !this.$store.state.user_settings.blocks.allBlocks
+			this.$store.commit('user_settings/set', {blocks: {allBlocks: nval}})
+			this.allBlocks = nval
+		},
 		instrumentInfo(block) {
 			try {
 				return symbols[block.market][block.instrument];

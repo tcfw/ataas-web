@@ -37,23 +37,43 @@ export default {
 	},
 	watch: {
 		exchange() {
+			this.xOffset = 0;
 			this.fetch()
 		},
 		symbol() {
+			this.xOffset = 0;
 			this.fetch()
 		},
 		data() {
 			this.draw()
-		}
+		},
+		candleWidth(v) {
+			this.$store.state.user_settings.trades.candleWidth;
+			this.$store.commit('user_settings/set', {trades: {candleWidth: this.candleWidth}})
+		},
 	},
 	created() {
 		this.fetch()
 		this.timer = setInterval(this.fetch, 30000)
+		this.candleWidth = this.$store.state.user_settings.trades.candleWidth;
 	},
 	unmounted() {
 		clearInterval(this.timer);
 	},
 	methods: {
+		fetch() {
+			let req = {
+				market: this.exchange,
+				instrument: this.symbol,
+				interval: this.interval,
+				depth: 200,
+			}
+			this.$http.get('/v1/history/candle', {params: req}).then(d => {
+				this.data = d.data.data
+			}).catch(e => {
+				alert(e)
+			})
+		},
 		scroll(e) {
 			this.candleWidth += e.deltaY
 			if (this.candleWidth <= 4) {
@@ -88,19 +108,6 @@ export default {
 		hideMouse(e) {
 			this.showMouse = false
 			this.draw()
-		},
-		fetch() {
-			let req = {
-				market: this.exchange,
-				instrument: this.symbol,
-				interval: this.interval,
-				depth: 50,
-			}
-			this.$http.get('/v1/history/candle', {params: req}).then(d => {
-				this.data = d.data.data
-			}).catch(e => {
-				alert(e)
-			})
 		},
 		draw() {
 			let minmax = this.Yminmax()

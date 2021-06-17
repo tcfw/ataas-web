@@ -3,6 +3,7 @@ import blocks from './modules/blocks';
 import me from './modules/me';
 import orders from './modules/orders';
 import strategies from './modules/strategies';
+import user_settings from './modules/user_settings';
 
 export function initStore() {
 	return createStore({
@@ -11,6 +12,7 @@ export function initStore() {
 			strategies,
 			orders,
 			me,
+			user_settings,
 		}
 	});
 }

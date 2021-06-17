@@ -26,6 +26,9 @@ export default {
       timer: {},
     }
   },
+  beforeCreate() {
+    this.$store.commit('user_settings/init')
+  },
   created() {
     this.timer = setInterval(this.isLoggedIn, 500)
   },
