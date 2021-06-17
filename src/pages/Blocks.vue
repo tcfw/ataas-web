@@ -93,7 +93,7 @@
 							<div v-else>Loading...</div>
 						</div>
 					</div>
-					<div class="panel">
+					<div class="panel mb-5">
 						<div class="title">Orders</div>
 						<div style="max-height: 250px; overflow-y: auto;">
 							<div v-for="order in orders" :key="order.id" class="order">
@@ -112,7 +112,7 @@
 					<div class="panel col-span-2">
 						<div class="title">Profit &amp; Loss</div>
 					</div>
-					<div class="panel col-span-2">
+					<div class="panel col-span-2 mb-5">
 						<div class="title">History</div>
 						<TradeCandle :exchange="selected.market" :symbol="selected.instrument" />
 					</div>
@@ -123,7 +123,7 @@
 	<Dialog :visible="showAdd" @bgClick="showAdd = !showAdd">
 		<template v-slot:header>Add New Block</template>
 		<template v-slot:body>
-			<BlockForm ref="bform" />
+			<BlockForm ref="bform" @submitted="onAdd" />
 		</template>
 		<template v-slot:footer>
 			<button class="ml-4 btn primary sm" @click="addBlock">Add</button>
@@ -216,6 +216,12 @@ export default {
 			let nval = !this.$store.state.user_settings.blocks.allBlocks
 			this.$store.commit('user_settings/set', {blocks: {allBlocks: nval}})
 			this.allBlocks = nval
+		},
+		onAdd(block) {
+			this.showAdd = false;
+			this.selected = block
+			this.selectedId = block.id
+			setTimeout(this.load, 700)
 		},
 		instrumentInfo(block) {
 			try {
@@ -376,7 +382,7 @@ button#add {
 	}
 
 	#info-sep {
-		@apply bg-white shadow-sm block h-1 -mx-10 mt-2 mb-4 overflow-hidden cursor-move select-none;
+		@apply bg-white shadow-sm block h-1 -mx-10 mb-4 overflow-hidden cursor-move select-none;
 
 		&:hover {
 			@apply bg-blue-400;

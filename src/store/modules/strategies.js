@@ -39,7 +39,7 @@ export default {
 		new({ commit }, strategy) {
 			let res = api.post('/v1/strategy', strategy);
 			res.then(d => {
-				commit('update', d.data);
+				commit('update', d.data.strategy);
 			});
 			return res;
 		}

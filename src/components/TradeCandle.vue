@@ -1,5 +1,14 @@
 <template>
 	<!-- {{data}} -->
+	<div class="flex flex-row space-x-2 text-sm -mt-10 ml-16">
+		<div class="text-yellow-500 cursor-pointer hover:text-yellow-400" @click="interval = '1m'">1m</div>
+		<div class="text-yellow-500 cursor-pointer hover:text-yellow-400" @click="interval = '5m'">5m</div>
+		<div class="text-yellow-500 cursor-pointer hover:text-yellow-400" @click="interval = '10m'">10m</div>
+		<div class="text-yellow-500 cursor-pointer hover:text-yellow-400" @click="interval = '30m'">30m</div>
+		<div class="text-yellow-500 cursor-pointer hover:text-yellow-400" @click="interval = '1h'">1h</div>
+		<div class="text-yellow-500 cursor-pointer hover:text-yellow-400" @click="interval = '3h'">3h</div>
+		<div class="text-yellow-500 cursor-pointer hover:text-yellow-400" @click="interval = '6h'">6h</div>
+	</div>
 	<canvas 
 		ref="maincanvas"
 		class="trade-chart"
@@ -33,6 +42,8 @@ export default {
 
 			dragging: false,
 			dragStartPos: 0,
+
+			moDataPoint: null,
 		}
 	},
 	watch: {
@@ -43,6 +54,9 @@ export default {
 		symbol() {
 			this.xOffset = 0;
 			this.fetch()
+		},
+		interval() {
+			this.fetch();
 		},
 		data() {
 			this.draw()
@@ -98,8 +112,8 @@ export default {
 				this.xOffset += this.mouseX - this.dragStartPos
 				this.dragStartPos = this.mouseX
 
-				if (this.xOffset <= -400) {
-					this.xOffset = -400
+				if (this.xOffset <= -200) {
+					this.xOffset = -200
 				}
 			}
 
@@ -112,6 +126,8 @@ export default {
 		draw() {
 			let minmax = this.Yminmax()
 			let dims = this.canvDims()
+
+			this.moDataPoint = null
 
 			this.$refs.maincanvas.width = dims.width
 
@@ -132,6 +148,21 @@ export default {
 			if (this.showMouse) {
 				this.drawCursor(ctx, dims)
 			}
+
+			if (this.moDataPoint) {
+				this.drawmodp(ctx, dims)
+			}
+		},
+		drawmodp(ctx, dims) {
+			ctx.font = "normal 13px Ubuntu,Helvetica,Arial,sans-serif";
+			ctx.fillStyle = '#334';
+			const ohlc = this.moDataPoint.ohlc;
+			const x = this.moDataPoint.x
+			const y = this.moDataPoint.y - 80
+			ctx.fillText(`Open: ${ohlc.open}`, x, y + 10)
+			ctx.fillText(`High: ${ohlc.high}`, x, y + 25)
+			ctx.fillText(`Low: ${ohlc.low}`, x, y + 40)
+			ctx.fillText(`Close: ${ohlc.close}`, x, y + 55)
 		},
 		Yminmax() {
 			let max = _.maxBy(this.data, 'high').high
@@ -159,16 +190,17 @@ export default {
 		},
 		drawCursor(ctx, dims) {
 			const pad = 20
-			ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)'
+			ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)'
 
 			//Vert
 			if (this.mouseX <= dims.width-120) {
 				ctx.beginPath()
 				ctx.setLineDash([10, 5])
-				ctx.lineWith = 0.5;
+				// ctx.lineWith = 1;
 				const vx = Math.min(dims.width-120, Math.ceil(this.mouseX))
 				ctx.moveTo(vx, pad)
 				ctx.lineTo(vx, dims.height-pad)
+				ctx.closePath()
 				ctx.stroke()
 			}
 
@@ -176,10 +208,11 @@ export default {
 			if (this.mouseY >= 30 && this.mouseY <= dims.height-30) {
 				ctx.beginPath()
 				ctx.setLineDash([10, 5])
-				ctx.lineWith = 0.5;
+				ctx.lineWith = 1;
 				const hy = Math.ceil(this.mouseY)
 				ctx.moveTo(10, hy)
 				ctx.lineTo(dims.width-120, hy)
+				ctx.closePath()
 				ctx.stroke()
 			}
 
@@ -202,7 +235,7 @@ export default {
 			}
 
 			const rpad = 10
-			const tpad = 10
+			const tpad = 22
 
 			//Line H-L
 			ctx.beginPath()
@@ -211,21 +244,24 @@ export default {
 			if (x < 20 || x >= (dims.width - 120)) return;
 
 			const y1 = Math.floor(tpad + (1-((ohlc.high-minmax.min)/(minmax.max-minmax.min))) * dims.height)
-			const y2 = Math.floor(y1 + (((ohlc.high-ohlc.low)/(minmax.max-minmax.min))) * dims.height)
+			const y2 = Math.floor(y1 + (((ohlc.high-ohlc.low)/(minmax.max-minmax.min))) * dims.height)+2
 			ctx.moveTo(x, y1)
 			ctx.lineTo(x, y2)
 			ctx.closePath()
 			ctx.stroke()
 
 			//Bar O-C
-			// ctx.beginPath()
-			// ctx.closePath()
-			// ctx.fill()
 			const oy1 = Math.floor(tpad + (1-((ohlc.open-minmax.min)/(minmax.max-minmax.min))) * dims.height)
-			const oy2 = Math.floor((1-((ohlc.close-minmax.min)/(minmax.max-minmax.min))) * dims.height - oy1 + tpad + 1)
+			const oy2 = Math.floor((1-((ohlc.close-minmax.min)/(minmax.max-minmax.min))) * dims.height - oy1 + tpad)+2
 			const ox = Math.floor(x-(widthScale/2))
 			const ox1 = Math.floor(widthScale)
 			ctx.fillRect(ox, oy1, ox1, oy2)
+
+			//Set cursor point data
+			if (this.mouseX <= x+(widthScale/2) && this.mouseX >= x-(widthScale/2)) {
+				this.moDataPoint = {ohlc, x, y: Math.min(y1,y2)}
+			}
+
 		},
 		canvDims() {
 			const domSize = this.$refs.maincanvas.getBoundingClientRect()

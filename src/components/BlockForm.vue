@@ -100,6 +100,7 @@ export default {
 			return symbols[this.exchange][this.market].local;
 		}
 	},
+	emits: ['submitted'],
 	methods: {
       highlighter(code) {
         return highlight(code, languages.js); // languages.<insert language> to return html with markup
@@ -131,10 +132,9 @@ export default {
 		}
 
 		this.$store.dispatch('strategies/new', {strategy}).then(resp => {
-			window.console.log(resp)
 			block.strategy_id = resp.data.strategy.id
 			this.$store.dispatch('blocks/new', block).then(block => {
-				alert(block)
+				this.$emit('submitted', block.data)
 			})
 		}).catch(e => {
 			alert(e);
