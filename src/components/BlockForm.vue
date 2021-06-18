@@ -77,7 +77,7 @@ export default {
 			market: "",
 			blockSize:"",
 			algo: "",
-			duration: 0,
+			duration: 3600000000000,
 			meanLog: {
 				duration: "30m",
 				buy: "0.001",
@@ -117,55 +117,57 @@ export default {
 	watch: {
 		calcDuration: {
 			handler(v) {
-				window.console.log(this.calcDuration);
-				let s = this.calcDuration.s
-				s += this.calcDuration.m * 60
-				s += this.calcDuration.h * 60 * 60
-				this.duration = s * 1000000000
+				this.calculateDuration()
 			},
 			deep: true,
 		}
 	},
 	methods: {
-      highlighter(code) {
-        return highlight(code, languages.js); // languages.<insert language> to return html with markup
-      },
-	  submit() {
-		let params = {};
+		calculateDuration() {
+			let s = this.calcDuration.s
+			s += this.calcDuration.m * 60
+			s += this.calcDuration.h * 60 * 60
+			this.duration = s * 1000000000
+		},
+		highlighter(code) {
+		return highlight(code, languages.js); // languages.<insert language> to return html with markup
+		},
+		submit() {
+			let params = {};
 
-		switch (this.algo) {
-		case 'MeanLog':
-			params = this.meanLog
-		break;
-		case 'JSRuntime':
-			params = this.js
-		}
+			switch (this.algo) {
+			case 'MeanLog':
+				params = this.meanLog
+			break;
+			case 'JSRuntime':
+				params = this.js
+			}
 
-		let strategy = {
-			market: this.exchange,
-			instrument: this.market,
-			strategy: this.algo,
-			params: params,
-			duration: this.duration,
-		}
+			let strategy = {
+				market: this.exchange,
+				instrument: this.market,
+				strategy: this.algo,
+				params: params,
+				duration: this.duration,
+			}
 
-		let block = {
-			market: this.exchange,
-			instrument: this.market,
-			purchase: this.blockSize,
-			backoutPercentage: 0.05,
-		}
+			let block = {
+				market: this.exchange,
+				instrument: this.market,
+				purchase: this.blockSize,
+				backoutPercentage: 0.05,
+			}
 
-		this.$store.dispatch('strategies/new', {strategy}).then(resp => {
-			block.strategy_id = resp.data.strategy.id
-			this.$store.dispatch('blocks/new', block).then(block => {
-				this.$emit('submitted', block.data)
+			this.$store.dispatch('strategies/new', {strategy}).then(resp => {
+				block.strategy_id = resp.data.strategy.id
+				this.$store.dispatch('blocks/new', block).then(block => {
+					this.$emit('submitted', block.data)
+				})
+			}).catch(e => {
+				alert(e);
 			})
-		}).catch(e => {
-			alert(e);
-		})
-	  }
-    },
+		}
+	},
 }
 </script>
 <style lang="scss" scoped>
