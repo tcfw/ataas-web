@@ -77,7 +77,7 @@ export default {
 			market: "",
 			blockSize:"",
 			algo: "",
-			duration: 3600000000000,
+			duration: 3600,
 			meanLog: {
 				duration: "30m",
 				buy: "0.001",
@@ -127,7 +127,7 @@ export default {
 			let s = this.calcDuration.s
 			s += this.calcDuration.m * 60
 			s += this.calcDuration.h * 60 * 60
-			this.duration = s * 1000000000
+			this.duration = s
 		},
 		highlighter(code) {
 		return highlight(code, languages.js); // languages.<insert language> to return html with markup
