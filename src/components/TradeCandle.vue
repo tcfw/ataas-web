@@ -22,7 +22,8 @@
 	/>
 </template>
 <script>
-import _ from 'lodash'
+import _ from 'lodash';
+import moment from 'moment';
 
 export default {
 	props: {
@@ -158,11 +159,12 @@ export default {
 			ctx.fillStyle = '#334';
 			const ohlc = this.moDataPoint.ohlc;
 			const x = this.moDataPoint.x
-			const y = this.moDataPoint.y - 80
+			const y = this.moDataPoint.y - 120
 			ctx.fillText(`Open: ${ohlc.open}`, x, y + 10)
 			ctx.fillText(`High: ${ohlc.high}`, x, y + 25)
 			ctx.fillText(`Low: ${ohlc.low}`, x, y + 40)
 			ctx.fillText(`Close: ${ohlc.close}`, x, y + 55)
+			ctx.fillText(`Time: `+moment.unix(ohlc.timestamp).format('DD MMM YYYY hh:mm a (Z)'), x, y + 70)
 		},
 		Yminmax() {
 			let max = _.maxBy(this.data, 'high').high
