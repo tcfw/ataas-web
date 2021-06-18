@@ -28,7 +28,7 @@ export const symbols = {
 			local: "AUD",
 			foreign: "DOGE",
 			split: "DOGE/AUD",
-			icon: "/forex-icons/dodge.svg",
+			icon: "/forex-icons/doge.svg",
 			blockRef: "DOGEAUD",
 			description: "",
 		},

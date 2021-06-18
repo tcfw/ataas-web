@@ -18,8 +18,14 @@
 		</template>
 		<h3 class="border-b border-gray-300 pb-2 mt-7 text-gray-500">Strategy</h3>
 		<div class="field">
-			<label>Schedule <small class="text-gray-400">(e.g. '5h', '35m', '1h 30m')</small></label>
-			<input v-model="duration" />
+			<label>Schedule</label>
+			<!-- <small class="text-gray-400">(e.g. '5h', '35m', '1h 30m')</small> -->
+			<!-- <input v-model="duration" /> -->
+			<div class="flex flex-row">
+				<Counter class="mr-6" label="h" v-model="calcDuration.h" :max="200" />
+				<Counter class="mr-6" label="m" v-model="calcDuration.m" />
+				<Counter label="s" v-model="calcDuration.s" />
+			</div>
 		</div>
 		<div class="field">
 			<label>Algorithm</label>
@@ -50,6 +56,7 @@
 import {symbols} from '../helpers/symbols';
 import _ from 'lodash';
 import Dropdown from '../components/Dropdown.vue';
+import Counter from '../components/Counter.vue';
 
 import { PrismEditor } from 'vue-prism-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
@@ -62,6 +69,7 @@ export default {
 	components: {
 		PrismEditor,
 		Dropdown,
+		Counter,
 	},
 	data() {
 		return {
@@ -69,11 +77,16 @@ export default {
 			market: "",
 			blockSize:"",
 			algo: "",
-			duration: "",
+			duration: 0,
 			meanLog: {
-				duration: "",
+				duration: "30m",
 				buy: "0.001",
 				stay: "0",
+			},
+			calcDuration: {
+				h: 1,
+				m: 0,
+				s: 0,
 			},
 			js: {
 				code: "let tr = GetTrades('binance.com', 'ADAAUD', '5m');\nvar last = 0;\nvar sum = 0.0;\n\ntr.forEach(trade => {\n\tif (last == 0) {\n\t\tlast = trade.Amount; \n\t\treturn;\n\t}\n\tsum += math.log10(trade.Amount/last);\n\tlast = trade.Amount;\n});\n\nif (sum >=0.001) {\n\treturn BUY;\n} else if (sum >=0) {\n\treturn STAY;\n}\nreturn SELL;",
@@ -101,6 +114,18 @@ export default {
 		}
 	},
 	emits: ['submitted'],
+	watch: {
+		calcDuration: {
+			handler(v) {
+				window.console.log(this.calcDuration);
+				let s = this.calcDuration.s
+				s += this.calcDuration.m * 60
+				s += this.calcDuration.h * 60 * 60
+				this.duration = s * 1000000000
+			},
+			deep: true,
+		}
+	},
 	methods: {
       highlighter(code) {
         return highlight(code, languages.js); // languages.<insert language> to return html with markup
