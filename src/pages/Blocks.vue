@@ -99,7 +99,8 @@
 							<div v-for="order in orders" :key="order.id" class="order">
 								<div class="w-14 direction" :class="{sell: order.action=='SELL'}">{{order.action ?? 'BUY'}}</div>
 								<div class="w-28 overflow-ellipsis overflow-hidden">{{order.units}}</div>
-								<div class="w-28">{{currency(order.price)}}</div>
+								<!-- <div class="w-28">{{currency(order.price, 3)}}</div> -->
+								<div class="w-28">{{order.price.toFixed(3)}}</div>
 								<div class="w-44">{{formatDateTime(order.timestamp)}}</div>
 							</div>
 							<div v-if="!orders || orders.length == 0" class="text-gray-300 text-sm ml-6 pb-2">
@@ -316,12 +317,13 @@ export default {
 				})
 			}
 		},
-		currency(v) {
+		currency(v, n) {
+			n = n || 2
 			if (!v) v = 0;
 			return v.toLocaleString('en-AU', {
 				style: 'currency',
 				currency: 'AUD',
-				minimumFractionDigits: 3,
+				minimumFractionDigits: n,
 			})
 		},
 		formatDateTime(v) {
