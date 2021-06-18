@@ -48,8 +48,8 @@
 			<div id="info-sep"></div>
 			<div>
 				<div class="buysell">
-					<button @click="manual('BUY')" class="buy" :disabled="selected.state != 'SOLD'">Buy</button>
-					<button @click="manual('SELL')" class="sell" :disabled="selected.state !='PENDING' && selected.state != 'PURCHASED'">Sell</button>
+					<button @click="manual('BUY')" class="buy" :disabled="selected.state == 'PURCHASED'">Buy</button>
+					<button @click="manual('SELL')" class="sell" :disabled="selected.state == 'SOLD' || selected.state == 'PENDING'">Sell</button>
 				</div>
 				<div class="flex flex-row space-x-4 items-center">
 					<span v-if="selected.instrumentInfo && selected.instrumentInfo.icon" class="forex-icon lg" :style="{backgroundImage: 'url('+selected.instrumentInfo.icon+')'} "></span>
@@ -478,18 +478,24 @@ button#add {
 .buysell {
 	@apply float-right flex mt-1;
 
+	.buy, .sell {
+		&[disabled] {
+			@apply shadow-none cursor-not-allowed;
+		}
+	}
+
 	.buy {
 		@apply py-2 px-3 bg-green-500 text-white rounded-l-lg shadow-lg text-sm;
 
 		&[disabled] {
-			@apply bg-green-300 shadow-none;
+			@apply bg-green-300;
 		}
 	}
 	.sell {
 		@apply py-2 px-3 bg-red-500 text-white rounded-r-lg shadow-lg text-sm;
 
 		&[disabled] {
-			@apply bg-red-200 shadow-none;
+			@apply bg-red-200;
 		}
 	}
 }

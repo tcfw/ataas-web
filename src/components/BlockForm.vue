@@ -80,7 +80,7 @@ export default {
 			duration: 3600,
 			meanLog: {
 				duration: "30m",
-				buy: "0.001",
+				buy: "0.002",
 				stay: "0",
 			},
 			calcDuration: {
