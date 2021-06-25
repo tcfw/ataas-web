@@ -7,11 +7,10 @@ html, body {
 }
 
 #app {
-	font-family: Ubuntu, Helvetica, Avenir, Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	
-	@apply h-full w-full flex flex-row;
+	@apply font-sans h-full w-full flex flex-row;
 
 	#header {
 		@apply py-3 bg-white shadow-lg;
